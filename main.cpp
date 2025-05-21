@@ -1,3 +1,4 @@
+#pragma once
 #include "textures.h"
 #include "screens.h"
 #include "user.h"
@@ -15,7 +16,5 @@ int main() {
     ScreenManager app;
     app.run();
 
-    //save all user data
-    User::saveAllUsers();
     return 0;
 }

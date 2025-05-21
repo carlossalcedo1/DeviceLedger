@@ -1,3 +1,4 @@
+#pragma once
 #include <unordered_map>
 #include <string>
 #include "textures.h"
@@ -9,12 +10,16 @@ using namespace std;
 unordered_map<string, sf::Texture> TextureManager::UIElements;
 
 void TextureManager::loadUIElements() {
-    std::unordered_map<std::string, std::string> filePaths = {
+    //Optimization-> want to use constexpr, make a compile-time key lookup with a constexpr function
+    const std::unordered_map<std::string, std::string> filePaths = {
         {"button_red",        "images/button_red.png"},
         {"button_green",     "images/button_green.png"},
         {"button_enter",     "images/button_enter.png"},
         {"button_home",     "images/button_home.png"},
-        {"button_back",     "images/button_back.png"}
+        {"button_grey",     "images/button_grey.png"},
+        {"button_back",     "images/button_back.png"},
+        {"back_page_button", "images/back_page_button.png"},
+        {"next_page_button", "images/next_page_button.png"}
     };
 
     for (auto it = filePaths.begin(); it != filePaths.end(); ++it) {

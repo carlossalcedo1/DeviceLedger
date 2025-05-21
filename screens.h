@@ -8,27 +8,16 @@
 
 using namespace std;
 
-enum class State {
-    Login,
-    CreateAccount,
-    ForgotPassword,
-    Dashboard,
-    waterTracker,
-    calorieTracker,
-    Records,
-    Exit,
-};
 
 
 class ScreenManager {
     sf::RenderWindow window;
     sf::Font font;
+    float width = 900;
+    float height = 600;
 
     bool error = false;
     std::chrono::steady_clock::time_point errorStartTime;
-
-    float width = 900;
-    float height = 600;
 
     enum class ButtonState {
         None,
@@ -37,11 +26,23 @@ class ScreenManager {
         Quit,
     };
 
+    enum class State {
+        Login,
+        CreateAccount,
+        ForgotPassword,
+        Dashboard,
+        CheckConsole,
+        listDevices,
+        currentDeviceScreen,
+        Exit,
+    };
+
     State currentState = State::Login;
     ButtonState buttonState = ButtonState::None;
     weak_ptr<User> currentUser;
 
 public:
+
     ScreenManager() {
         if (!font.loadFromFile("files/font.ttf")) {
             cout << "Failed to load font." << endl;\
@@ -51,6 +52,10 @@ public:
     ~ScreenManager() {
         cout << "Screen Manager object deleted, automatic memory management through smart pointers" << endl;
     }
+
+    static inline string& textFormatter(string &text);
+
+    shared_ptr<User> inline getCurrentUser() const {return !currentUser.expired() ? currentUser.lock() : nullptr;}
 
     void run();
 
@@ -62,9 +67,14 @@ public:
 
     void dashboardScreen();
 
-    void calorieScreen();
+    void listDevices();
 
-    void waterScreen();
+    void checkConsoleScreen();
+
+    void currentDeviceScreen();
+
+
+
 
 
 };

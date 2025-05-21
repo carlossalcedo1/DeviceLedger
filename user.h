@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
-#include <fstream>
+#include <memory>
 
 using namespace std;
 
@@ -10,151 +10,66 @@ class User {
     string username;
     string password;
 
-public:
-    User(const string& username, const string& password) : username(username), password(password) {
-        std::cout << "Creating user: " << username << std::endl;
+
+    struct Device {
+        string name;
+        string model;
+        string brand;
+        string imeiNumber;
+        string seller;
+
+        Device(const string& name, const string& model, const string& brand, const string& imeiNumber, const string& seller) : name(name),
+        model(model), brand(brand), imeiNumber(imeiNumber), seller(seller) {}
+
+        explicit Device(const string responses[5]) {
+            name = responses[0];
+            model = responses[1];
+            brand = responses[2];
+            imeiNumber = responses[3];
+            seller = responses[4];
+        }
     };
 
-    // ~User() {
-    //     for (auto it = loadedUsers.begin(); it != loadedUsers.end(); ++it) {
-    //         delete it->second;
-    //     }
-    //     loadedUsers.clear();
-    // };
 
-    [[nodiscard]] string getUsername() const {
-        return username;
+    std::unordered_map<string, shared_ptr<Device>> devices;
+    weak_ptr<Device> currentDevice;
+
+public:
+    User(const string& username, const string& password) : username(username), password(password) {}
+
+    //getters
+    const std::unordered_map<std::string, std::shared_ptr<Device>>& getDevices() const {return devices;}
+
+    void inline setCurrentDevice(const weak_ptr<Device> &device) {currentDevice = device;}
+    shared_ptr<Device> inline getCurrentDevice() const {return !currentDevice.expired() ? currentDevice.lock() : nullptr;}
+
+    [[nodiscard]] inline string getUsername() const {return username;}
+    [[nodiscard]] inline string getPassword() const {return password;}
+
+    //functions - DEVICES
+    //string inline getProperty(const string &name, const string &property) const;
+    inline void addDevice(const string& name, const string& model, const string& brand, const string& imeiNumber, const string &seller) {
+        Device newDevice(name, model, brand, imeiNumber, seller);
+        devices.emplace(name, make_shared<Device>(newDevice));
+    }
+    inline void addDevice(const string responses[5]) {
+        Device newDevice(responses);
+        devices.emplace(responses[0], make_shared<Device>(newDevice));
     }
 
-    [[nodiscard]] string getPassword() const {
-        return password;
-    }
+    //functions - USER ACCOUNT
+    static bool userExists(const string& username);
+    static shared_ptr<User> getUser(const string& username);
+    static bool correctPassword(const string& username, const string& password);
+
+    static void addUser(std::shared_ptr<User> user, const std::string& username);
+    static bool deleteUser(const string& username);
+
+    static unsigned int loadAllUsers();
+    void saveUserData();
 
 
-    // bool correctQuestion(const char& question) const {
-    //     return question == this->securityNumber;
-    // }
 
-    static bool userExists(const string& username) {
-        if (const auto it = loadedUsers.find(username); it != loadedUsers.end()) {
-            return true;
-        }
-        return false;
-    }
-
-    static shared_ptr<User> getUser(const string& username) {
-        if (const auto it = loadedUsers.find(username); it != loadedUsers.end()) {
-            return it->second;
-        }
-        return nullptr;
-    }
-
-    static bool correctPassword(const string& username, const string& password) {
-        if (const auto it = loadedUsers.find(username); it != loadedUsers.end()) {
-            return it->second->getPassword() == password;
-        }
-        return false;
-    }
-
-    static void addUser(std::shared_ptr<User> user, const std::string& username) {
-        cout << "adding user to map: " << username << endl;
-        loadedUsers.emplace(username, std::move(user));
-    }
-
-    static bool deleteUser(const string& username) {
-        if (const auto it = loadedUsers.find(username); it != loadedUsers.end()) {
-            loadedUsers.erase(it);
-            return true;
-        }
-        return false;
-    }
-
-    static unsigned int loadAllUsers() {
-        ifstream usersFile("files/users.dat", ios::binary);
-        if (!usersFile.is_open()) {
-            //create file if it doesn't exist
-            ofstream createFile("files/users.dat", ios::binary);
-            createFile.close();
-
-            usersFile.open("files/users.dat", ios::binary);
-        }
-
-        if (!usersFile.is_open()) {
-            cout << "File could not be opened, read-binary, users.data" << endl;
-            return 0;
-        }
-
-        //total number of users in file
-
-        // FILE STRUCTURE (For each user)
-        // Username String Length (int)
-        // Char[] of string username
-
-        // Password String Length (int)
-        // Char[] of string password
-        unsigned int numUsers = 0;
-        usersFile.read(reinterpret_cast<char*>(&numUsers), sizeof(numUsers));
-        for (int i = 0; i < numUsers; i++) {
-            char fieldLength;// 0 - 12
-            char* tempCopy;
-
-
-            usersFile.read(&fieldLength, sizeof(fieldLength));
-            tempCopy = new char[fieldLength];
-            usersFile.read(tempCopy, fieldLength);
-            string username(tempCopy, fieldLength);
-            delete[] tempCopy;
-
-            usersFile.read(&fieldLength, sizeof(fieldLength));
-            tempCopy = new char[fieldLength];
-            usersFile.read(tempCopy, fieldLength);
-            string password(tempCopy, fieldLength);
-            delete[] tempCopy;
-
-            loadedUsers.emplace(username, std::make_shared<User>(username, password));
-            std::cout << "Loading user: " << username << std::endl;
-
-        }
-        return numUsers;
-    }
-
-    static bool saveAllUsers() {
-        if (loadedUsers.empty()) {
-            std::cout << "No users to save." << std::endl;
-            return false;
-        }
-
-
-        ofstream usersFile("files/users.dat", ios::binary);
-        if (!usersFile.is_open()) {
-            cout << "File could not be opened to save." << endl;
-            return false;
-        }
-
-        //the new user was already added to loadedUsers Map when createAccount is called.
-
-        unsigned int size = loadedUsers.size();
-        usersFile.write(reinterpret_cast<char*>(&size), sizeof(size));
-
-        for (const auto& user : loadedUsers) {
-            char fieldLength = static_cast<char>(user.second->getUsername().size());
-            usersFile.write(&fieldLength, sizeof(fieldLength));
-
-            for (unsigned int i = 0; i < user.second->getUsername().size(); i++) {
-                char temp = user.second->getUsername()[i];
-                usersFile.write(&temp, sizeof(temp));
-            }
-
-            fieldLength = static_cast<char>(user.second->getPassword().size());
-            usersFile.write(&fieldLength, sizeof(fieldLength));
-            for (unsigned int i = 0; i < user.second->getPassword().size(); i++) {
-                char temp = user.second->getPassword()[i];
-                usersFile.write(&temp, sizeof(temp));
-            }
-        }
-
-        return true;
-    }
 
 };
 

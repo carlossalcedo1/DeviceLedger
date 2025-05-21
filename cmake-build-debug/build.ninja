@@ -77,6 +77,13 @@ build CMakeFiles/gymapp.dir/textures.cpp.obj: CXX_COMPILER__gymapp_unscanned_Deb
   OBJECT_DIR = CMakeFiles\gymapp.dir
   OBJECT_FILE_DIR = CMakeFiles\gymapp.dir
 
+build CMakeFiles/gymapp.dir/user.cpp.obj: CXX_COMPILER__gymapp_unscanned_Debug C$:/Users/cman2/CLionProjects/gymapp/user.cpp || cmake_object_order_depends_target_gymapp
+  DEP_FILE = CMakeFiles\gymapp.dir\user.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -isystem C:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/include
+  OBJECT_DIR = CMakeFiles\gymapp.dir
+  OBJECT_FILE_DIR = CMakeFiles\gymapp.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target gymapp
@@ -85,7 +92,7 @@ build CMakeFiles/gymapp.dir/textures.cpp.obj: CXX_COMPILER__gymapp_unscanned_Deb
 #############################################
 # Link the executable gymapp.exe
 
-build gymapp.exe: CXX_EXECUTABLE_LINKER__gymapp_Debug CMakeFiles/gymapp.dir/main.cpp.obj CMakeFiles/gymapp.dir/records.cpp.obj CMakeFiles/gymapp.dir/screens.cpp.obj CMakeFiles/gymapp.dir/textures.cpp.obj | C$:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-graphics-d.a C$:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-window-d.a C$:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-audio-d.a C$:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-system-d.a
+build gymapp.exe: CXX_EXECUTABLE_LINKER__gymapp_Debug CMakeFiles/gymapp.dir/main.cpp.obj CMakeFiles/gymapp.dir/records.cpp.obj CMakeFiles/gymapp.dir/screens.cpp.obj CMakeFiles/gymapp.dir/textures.cpp.obj CMakeFiles/gymapp.dir/user.cpp.obj | C$:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-graphics-d.a C$:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-window-d.a C$:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-audio-d.a C$:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-system-d.a
   FLAGS = -g
   LINK_LIBRARIES = C:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-graphics-d.a  C:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-window-d.a  C:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-audio-d.a  C:/Users/cman2/CLionProjects/gymapp/SFML-2.5.1/lib/libsfml-system-d.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\gymapp.dir
