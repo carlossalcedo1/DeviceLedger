@@ -1,4 +1,3 @@
-#pragma once
 #include "textures.h"
 #include "screens.h"
 #include "user.h"

@@ -5,11 +5,12 @@
 
 <h2>Features</h2>
 <ul>
-  <li>Binary file system for efficency and local data persistence</li>
+  <li>Binary file system for efficiency and local data persistence</li>
   <li>User profiles with authentication & username and password</li>
   <li>User can add, edit, and delete device entries</li>
-  <li>Specialized Transaction codes that enable peer-to-peer transfers (coming soon!)</li>
-  <li>View Transaction History per each device</li>
+  <li>Specialized transfer codes that enable peer-to-peer transfers between users</li>
+  <li>Marketplace feature where users can buy and sell their devices to other users</li>
+  <li>Customizable Settings menu</li>
 </ul>
 
 <h2>Tech Stack</h2>

@@ -28,7 +28,7 @@ struct ButtonManager {
         this->name = name;
         isText = false;
 
-        const auto bounds = sprite.getGlobalBounds();
+        const auto bounds = sprite.getLocalBounds();
         sprite.setOrigin(bounds.width / 2, bounds.height / 2);
 
         sprite.setPosition(x, y);
@@ -66,6 +66,14 @@ struct ButtonManager {
         text.setOrigin(textRect.left + textRect.width/2.0f,
         textRect.top + textRect.height/2.0f);
         text.setPosition(sf::Vector2f(position.first,position.second));
+    }
+
+    void setTexture(const sf::Texture& newTexture) {
+        sprite.setTexture(newTexture);
+
+        // Recalculate bounds and origin to keep it centered
+        const auto bounds = sprite.getLocalBounds();
+        sprite.setOrigin(bounds.width / 2, bounds.height / 2);
     }
 
     void draw(sf::RenderWindow& window) const {

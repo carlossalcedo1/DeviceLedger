@@ -1,4 +1,3 @@
-#pragma once
 #include <string>
 #include <unordered_map>
 #include <fstream>
@@ -74,11 +73,11 @@ unsigned int User::loadAllUsers() {
             // Model Length (int), char[] of string model
             // IMEI Length (int), char[] of string IMEI
             // Seller Length (int), char[] of string seller
+            // Listed Status (bool)
 
     unsigned int numUsers = 0;
     usersFile.read(reinterpret_cast<char*>(&numUsers), sizeof(numUsers));
     uint8_t fieldLength;// 0 - 12
-    //char* tempCopy;
 
 
     for (int i = 0; i < numUsers; i++) {
@@ -97,11 +96,11 @@ unsigned int User::loadAllUsers() {
         //setup User pointer and add to map
         auto user = std::make_shared<User>(username, password);
         loadedUsers.emplace(username, user);
-        std::cout << "Saving user: " << username << std::endl;
+        std::cout << "Loading user: " << username << std::endl;
 
         //loading user devices
 
-        std::cout << "Loaded user: " << username << "'s devices" <<std::endl;
+        std::cout << "Loading devices for -> " << username <<std::endl;
 
         //get total amount of devices per user
         unsigned int devicesCount =0;
@@ -117,10 +116,22 @@ unsigned int User::loadAllUsers() {
 
 
             }
-            user->addDevice(prompts);
+            //read marketplace attributes
+            bool listed = false;
+            usersFile.read(reinterpret_cast<char*>(&listed), sizeof(bool));
+
+            string listCode;
+            usersFile.read(reinterpret_cast<char*>(&fieldLength), sizeof(fieldLength));
+            listCode.resize(fieldLength, '\0');
+            usersFile.read(&listCode[0], fieldLength);
+
+            listed ? user->addDevice(prompts, listed, listCode) : user->addDevice(prompts);
+
+            cout << "Marketplace Conditions: " << listed << listCode << endl;
         }
 
     }
+    cout << "Successfully read user data." << endl << endl;
     return numUsers;
 }
 
@@ -134,7 +145,7 @@ void User::saveUserData() {
         return;
     }
     uint8_t fieldLength;
-    cout << "Saving users data.." << endl;
+    cout << "Saving all user data..." << endl;
 
     //the new user was already added to loadedUsers Map when createAccount is called.
 
@@ -159,7 +170,7 @@ void User::saveUserData() {
 
         //devices count
         unsigned int numDevices = user->devices.size();
-        cout << "Saving devices.., amount: " << numDevices << endl;
+        cout << "Saving devices for " << user->getUsername() <<" -> amount, " << numDevices << endl;
         usersFile.write(reinterpret_cast<char*>(&numDevices), sizeof(numDevices));
 
         for (const auto&[name, device] : user->devices) {
@@ -171,6 +182,16 @@ void User::saveUserData() {
                 usersFile.write(reinterpret_cast<char*>(&fieldLength), sizeof(fieldLength));
                 usersFile.write(prompt.c_str(), fieldLength);
             }
+
+            bool listed = device->listed;
+            usersFile.write(reinterpret_cast<char*>(&listed), sizeof(listed));
+
+            fieldLength = static_cast<uint8_t>(device->listCode.size());
+            usersFile.write(reinterpret_cast<char*>(&fieldLength), sizeof(fieldLength));
+            usersFile.write(device->listCode.c_str(), fieldLength);
+
+            cout << "Marketplace Conditions: " << listed << device->listCode << endl;
         }
     }
+    cout << "Successfully saved user data." << endl << endl;
 }

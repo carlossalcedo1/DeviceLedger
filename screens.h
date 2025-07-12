@@ -31,9 +31,16 @@ class ScreenManager {
         CreateAccount,
         ForgotPassword,
         Dashboard,
+        Store,
         CheckConsole,
         listDevices,
         currentDeviceScreen,
+        transferCode,
+        transferCodeBuyer,
+        itemList,
+        marketplace,
+        storeCurrentDevice,
+        settings,
         Exit,
     };
 
@@ -47,10 +54,6 @@ public:
         if (!font.loadFromFile("files/font.ttf")) {
             cout << "Failed to load font." << endl;\
         }
-    }
-
-    ~ScreenManager() {
-        cout << "Screen Manager object deleted, automatic memory management through smart pointers" << endl;
     }
 
     static inline string& textFormatter(string &text);
@@ -73,10 +76,17 @@ public:
 
     void currentDeviceScreen();
 
+    void transferCodeScreenSeller();
 
+    void transferCodeScreenBuyer();
 
+    void itemList();
 
+    void store();
 
+    void storeCurrentDevice();
+
+    void settings();
 };
 
 
